@@ -1,0 +1,89 @@
+{
+  "info": {
+    "name": "Seat Booking Concurrency",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Seed seats",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/seats/seed",
+          "host": ["{{baseUrl}}"],
+          "path": ["seats", "seed"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"count\": 10\n}"
+        }
+      }
+    },
+    {
+      "name": "Get seat status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/seats/{{seatId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["seats", "{{seatId}}"]
+        }
+      }
+    },
+    {
+      "name": "Hold seat",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/seats/{{seatId}}/hold",
+          "host": ["{{baseUrl}}"],
+          "path": ["seats", "{{seatId}}", "hold"]
+        }
+      }
+    },
+    {
+      "name": "Create booking (idempotent)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Idempotency-Key",
+            "value": "{{idempotencyKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/bookings",
+          "host": ["{{baseUrl}}"],
+          "path": ["bookings"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"seatId\": \"{{seatId}}\",\n  \"userId\": \"{{userId}}\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Query booking",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/bookings/{{bookingId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["bookings", "{{bookingId}}"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "seatId", "value": "" },
+    { "key": "bookingId", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "idempotencyKey", "value": "" }
+  ]
+}
+

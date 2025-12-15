@@ -11,24 +11,32 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Seat {
   id              String   @id @default(uuid())
-  status          SeatStatus
-  version         Int      @default(0)
+  status          SeatStatus @default(AVAILABLE)
+  version         Int        @default(0)
   holdExpiresAt   DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  bookings        Booking[]
+
+  @@index([status, holdExpiresAt])
 }
 
 model Booking {
   id              String   @id @default(uuid())
   seatId          String
   userId          String
-  status          BookingStatus
+  status          BookingStatus @default(CONFIRMED)
   idempotencyKey  String   @unique
   createdAt       DateTime @default(now())
+
+  seat            Seat     @relation(fields: [seatId], references: [id], onDelete: Cascade)
+
+  @@index([seatId])
 }
 
 enum SeatStatus {

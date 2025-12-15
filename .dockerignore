@@ -1,0 +1,14 @@
+node_modules
+dist
+npm-debug.log
+Dockerfile
+docker-compose.yml
+.git
+.gitignore
+.env
+coverage
+tmp
+**/*.swp
+**/*.swo
+**/*.log
+
