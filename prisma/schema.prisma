@@ -12,3 +12,32 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Seat {
+  id              String   @id @default(uuid())
+  status          SeatStatus
+  version         Int      @default(0)
+  holdExpiresAt   DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Booking {
+  id              String   @id @default(uuid())
+  seatId          String
+  userId          String
+  status          BookingStatus
+  idempotencyKey  String   @unique
+  createdAt       DateTime @default(now())
+}
+
+enum SeatStatus {
+  AVAILABLE
+  HOLD
+  BOOKED
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}
