@@ -1,13 +1,13 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { envNumber } from '../common/config/env';
-import { RedisLockService } from '../common/lock/redis-lock.service';
+import { RedlockService } from '../common/lock/redlock.service';
 
 @Injectable()
 export class SeatService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly lockService: RedisLockService,
+    private readonly lockService: RedlockService,
   ) {}
 
   async createSeats(count: number): Promise<void> {
@@ -29,7 +29,9 @@ export class SeatService {
 
   async holdSeat(seatId: string) {
     const lockKey = `seat:${seatId}`;
-    return this.lockService.withLock(lockKey, envNumber('LOCK_TTL_MS', 3000), async () => {
+    const lockTtlMs = envNumber('LOCK_TTL_MS', 5000);
+    const extendIntervalMs = Math.floor(lockTtlMs * 0.6);
+    return this.lockService.withLock(lockKey, lockTtlMs, async () => {
       const seat = await this.prisma.seat.findUnique({ where: { id: seatId } });
       if (!seat) {
         throw new NotFoundException('Seat not found');
